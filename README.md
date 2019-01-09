@@ -20,7 +20,25 @@ In the future, we plan to make dStruct available through Bioconductor.
 
 ## Usage
 
-dStruct takes reactivities of groups of samples for all transcripts under consideration.
+dStruct takes reactivities of groups of samples, say A and B, for all transcripts under consideration. The reactivities for each transcript must be a data frame object with columns labeled as A1, A2, ... and B1, B2, ... The numerals in column names indicate sample number. Let us that `reactivity` represents one such data frame, that there are 3 samples of each group and that the user needs to search for a minimum length of 11 nt. _De novo_ discovery of differential regions can be done by executing the following command.
+
+`dStruct(reactivity, reps_A = 3, reps_B = 3, min_length = 11)`
+
+Reactivities for all transcripts can be stored together in a list object, say `rlist`, with one data frame for each transcript. All the list elements must have unique names. In this case,  _de novo_ discovery can be done simultaneously for all transcripts.
+
+`dStructome(rlist, reps_A = 3, reps_B = 3, min_length = 11)`
+
+Users can specify the number of cores to be used by `dStructome` for parallel processing of transcripts.
+
+For guided discovery, data frame with reactivities should contain only information for regions of interest. There should be a separate data frame for each region. Let one such data frame be `reac_region1`. If there are say, 3 samples of each group, guided discovery can be performed as follows.
+
+`dStruct.guided(reac_region1, reps_A = 3, reps_B = 3)`
+
+All the data frames can also be combined in a single list object, say `rlist`. Then, guided discovery could be done in parallel for all regions using the following command.
+
+`dStructome(rlist, reps_A = 3, reps_B = 3, method = "guided")`
+
+For other options available in dStruct package, refer the dStruct manual or email the contributors.
 
 ## Citation
 
