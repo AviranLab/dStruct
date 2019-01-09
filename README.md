@@ -2,7 +2,7 @@
 
 Method for identifying differential reactive regions from RNA structurome profiling data.
 
-dStruct is a statistical method for identifying regions that display altered reactivity patterns between two groups of samples. It can perform *de novo* discovery or identify regions from a list provided by the user. The latter case is called *guided discovery*.
+dStruct is a statistical method for identifying regions that display altered reactivity patterns between two groups of samples. It can perform *de novo* discovery or identify regions from a list provided by the user. The latter case is called *guided discovery*. dStruct is compatible with a diverse range of structure profiling technologies, accounts for biological variation and controls the false discovery rate in a multiple testing context.
 
 ## Getting started
 
