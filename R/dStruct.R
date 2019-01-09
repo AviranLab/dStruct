@@ -41,14 +41,27 @@ normalizer <- function(raw.estimates) {
 #' Identifies subgroupings of replicates for assessing within-group and between-group variation.
 #' @param reps_A Number of replicates of group A.
 #' @param reps_B Number of replicates of group B.
-#' @param batches Logical suggesting if replicates of group A and B were performed in batches and are labelled accordingly.
+#' @param batches Logical suggesting if replicates of group A and B were performed in batches and are labelled accordingly. If TRUE, a heterogeneous/homogeneous subset may not have multiple samples from the same batch.
 #' @param between_combs Dataframe with each column containing groupings of replicates of groups A and B, which will be used to assess between-group variation.
 #' @param within_combs Data.frame with each column containing groupings of replicates of groups A or B, which will be used to assess within-group variation.
 #' @return List of two dataframes, containing groupings for within-group and between-group variation.
 #' @export
 getCombs <- function(reps_A, reps_B, batches = F, between_combs= NULL, within_combs= NULL) {
+  if ((is.null(within_combs) & !is.null(between_combs)) | (is.null(between_combs) & !is.null(within_combs))) stop("Homogeneous and heterogeneous sets should either both be null or both be specified with equal number of samples in each set.")
+  if (!is.null(within_combs)) if (nrow(between_combs)!=nrow(within_combs)) stop("Heterogeneous and homogeneous sets should have equal number of samples.")
+  
+  set_membership = if (is.null(within_combs)) max(c(reps_A, reps_B)) else nrow(within_combs)
+  while ( (set_membership/2 > min(c(reps_A, reps_B))) | (set_membership %% 2 != 0) ) {
+    
+    if (set_membership  == 3) break
+    
+    set_membership = set_membership - 1
+    
+  }
+  
   all_combs = combn(c(paste0("A", 1:reps_A), paste0("B", 1:reps_B)),
-                    if (is.null(within_combs)) max(c(reps_A, reps_B)) else nrow(within_combs))
+                    set_membership)
+  
 
   if (batches) {
     invalid_due_to_batch = apply(all_combs, 2, function(x) {
@@ -56,24 +69,25 @@ getCombs <- function(reps_A, reps_B, batches = F, between_combs= NULL, within_co
       return(length(unique(curr_reps)) < length(curr_reps))
     })
 
-    all_combs = all_combs[, !invalid_due_to_batch]
+    all_combs = all_combs[, !invalid_due_to_batch] #Removes sets that have multiple samples from the same batch.
   }
 
   if (is.null(within_combs)) {
-    if (reps_A == reps_B) {
-      within_combs = cbind(paste0("A", 1:reps_A), paste0("B", 1:reps_B))
-    } else if (reps_A < reps_B) {
-      within_combs = data.frame(paste0("B", 1:reps_B))
-    } else {
-      within_combs = data.frame(paste0("A", 1:reps_A))
+    if (min(c(reps_A, reps_B)) >= set_membership) {
+      within_combs = cbind(combn(paste0("A", 1:reps_A), set_membership),
+                           combn(paste0("B", 1:reps_B), set_membership))
+    } else if (reps_A >= set_membership) {
+      within_combs = cbind(combn(paste0("A", 1:reps_A), set_membership))
+    } else if (reps_B >= set_membership) {
+      within_combs = cbind(combn(paste0("B", 1:reps_B), set_membership))
     }
+      
   }
 
 
   if (is.null(between_combs)) {
     between_combs_not_in = which(apply(all_combs, 2, paste0, collapse= "") %in% apply(within_combs, 2, paste0, collapse= ""))
     between_combs = data.frame(all_combs[, -between_combs_not_in])
-
     deg_of_heterogeneity = apply(between_combs, 2, function(x) {
       curr_reps = mapply(function(y) y[1], strsplit(x, split= ""))
       gA = length(which(curr_reps == "A"))
@@ -92,13 +106,13 @@ getCombs <- function(reps_A, reps_B, batches = F, between_combs= NULL, within_co
 #' Performs guided discovery of differentially reactive regions.
 #' @param reps_A Number of replicates of group A.
 #' @param reps_B Number of replicates of group B.
-#' @param rdf Dataframe of reactivities for each sample.
-#' @param batches Logical suggesting if replicates of group A and B were performed in batches and are labelled accordingly.
+#' @param rdf Dataframe of reactivities for each sample. Each column must be labelled as A1, A2, ..., B1, B2, ...
+#' @param batches Logical suggesting if replicates of group A and B were performed in batches and are labelled accordingly. If TRUE, a heterogeneous/homogeneous subset may not have multiple samples from the same batch.
 #' @param between_combs Dataframe with each column containing groupings of replicates of groups A and B, which will be used to assess between-group variation.
 #' @param within_combs Data.frame with each column containing groupings of replicates of groups A or B, which will be used to assess within-group variation.
 #' @param check_quality Logical, if TRUE, check regions for quality.
 #' @param quality Worst allowed quality for a region to be tested.
-#' @param evidence Minimum evidence of between-group variation for a region to be tested.
+#' @param evidence Minimum evidence of increase in variation from within-group comparisons to between-group comparisons for a region to be tested.
 #' @return p-value for the tested region, estimated using one-sided Wilcoxon signed rank test.
 #' @export
 dStruct.guided <- function(rdf, reps_A, reps_B, batches = F,
@@ -135,11 +149,11 @@ dStruct.guided <- function(rdf, reps_A, reps_B, batches = F,
 #' @param d_spec Nucleotide-wise d score for between-group variation.
 #' @param rdf Dataframe of reactivities for each sample.
 #' @param min_length Minimum length of constructed regions.
-#' @param check_signal_strength Logical, if TRUE, constructed regions must have a minimum signal strength.
+#' @param check_signal_strength Logical, if TRUE, construction of regions must be based on nucleotides that have a minimum absolute value of reactivity.
 #' @param check_nucs Logical, if TRUE, constructed regions must have a minimum number of nucleotides participating in Wilcoxon signed rank test.
 #' @param check_quality Logical, if TRUE, check constructed regions for quality.
 #' @param quality Worst allowed quality for a region to be tested.
-#' @param evidence Minimum evidence of between-group variation for a region to be tested.
+#' @param evidence Minimum evidence of increase in variation from within-group comparisons to between-group comparisons for a region to be tested.
 #' @param signal_strength Threshold for minimum signal strength.
 #' @export
 getRegions <- function(d_within, d_spec, rdf, min_length= 11,
@@ -157,7 +171,7 @@ getRegions <- function(d_within, d_spec, rdf, min_length= 11,
 
   to_test = c()
 
-  #How many nucleotides must a constructed region have.
+  #How many nucleotides with information must a constructed region have.
   min_nucs = min(min_length, 6)-1
 
   smooth_evidence = zoo::rollapply(d_spec - d_within, width = min_length,
@@ -235,8 +249,8 @@ getRegions <- function(d_within, d_spec, rdf, min_length= 11,
 }
 
 
-#' Assesses within-group variation.
-#' @param rdf Dataframe of reactivities for each sample.
+#' Assesses within-group or between-group variation.
+#' @param rdf Data.frame of reactivities for each sample.
 #' @param combs Data.frame with each column containing groupings of samples.
 #' @return Nucleotide-wise d score.
 #' @export
@@ -252,13 +266,13 @@ dCombs <- function(rdf, combs) {
   return(d)
 }
 
-#' Performs guided discovery of differentially reactive regions.
+#' Identifies contiguous regions from a list of nucleotide indices.
 #' @param x A vector of integers.
 #' @param gap Allowed gap to merge regions.
 #' @return Dataframe storing start and stop sites of continguous regions.
 #' @export
 getContigRegions <- function(x, gap = 0) {
-  if ((gap %% 1 != 0) | (gap < 0)) stop("parameter \'gap\' supplied to getContigRegions must be integer.")
+  if ((gap %% 1 != 0) | (gap < 0)) stop("parameter \'gap\' supplied to getContigRegions must be positive integer.")
   x = sort(x)
   return(data.frame(Start= c(x[1], x[which(diff(x) > 1 + gap) +1]),
                     Stop = c(x[which(diff(x) > 1 + gap)], tail(x, 1))))
@@ -271,18 +285,21 @@ getContigRegions <- function(x, gap = 0) {
 #' @param reps_B Number of replicates of group B.
 #' @param rdf Dataframe of reactivities for each sample.
 #' @param min_length Minimum length of constructed regions.
-#' @param check_signal_strength Logical, if TRUE, constructed regions must have a minimum signal strength.
+#' @param check_signal_strength Logical, if TRUE, construction of regions must be based on nucleotides that have a minimum absolute value of reactivity.
 #' @param check_nucs Logical, if TRUE, constructed regions must have a minimum number of nucleotides participating in Wilcoxon signed rank test.
 #' @param check_quality Logical, if TRUE, check constructed regions for quality.
-#' @param batches Logical suggesting if replicates of group A and B were performed in batches and are labelled accordingly.
+#' @param batches Logical suggesting if replicates of group A and B were performed in batches and are labelled accordingly. If TRUE, a heterogeneous/homogeneous subset may not have multiple samples from the same batch.
 #' @param between_combs Dataframe with each column containing groupings of replicates of groups A and B, which will be used to assess between-group variation.
 #' @param within_combs Data.frame with each column containing groupings of replicates of groups A or B, which will be used to assess within-group variation.
 #' @param quality Worst allowed quality for a region to be tested.
-#' @param evidence Minimum evidence of between-group variation for a region to be tested.
+#' @param evidence Minimum evidence of increase in variation from within-group comparisons to between-group comparisons for a region to be tested.
 #' @param signal_strength Threshold for minimum signal strength.
 #' @param ind_regions Logical, if TRUE, test each region found in the transcript separately.
 #' @param gap Integer. Join regions if they are separated by these many nucleotides.
 #' @param get_FDR Logical, if FALSE, FDR is not reported.
+#' @param proximity_assisted Logical, if TRUE, proximally located regions are tested together.
+#' @param proximity Maximum distance between constructed regions for them to be considered proximal.
+#' @param proximity_defined_length If performing a "proximity-assisted" test, minimum end-to-end length of a region to be tested.
 #' @return Constructs regions, reports p-values and FDR for them.
 #' @export
 dStruct <- function(rdf, reps_A, reps_B, batches = F, min_length = 11,
@@ -369,8 +386,8 @@ dStruct <- function(rdf, reps_A, reps_B, batches = F, min_length = 11,
         curr_res = NA
       } else {
         curr_res = tryCatch({
-          wilcox.test(d_within[contigs_test$Start[i]:contigs_test$Stop[i]],
-                      d_between[contigs_test$Start[i]:contigs_test$Stop[i]],
+          wilcox.test(d_within[curr_nucs],
+                      d_between[curr_nucs],
                       alternative = "less", paired= T)$p.value
 
         }, error= function(e) {
@@ -432,19 +449,22 @@ dStruct <- function(rdf, reps_A, reps_B, batches = F, min_length = 11,
 #' @param reps_B Number of replicates of group B.
 #' @param rl List of dataframes of reactivities for each sample.
 #' @param min_length Minimum length of constructed regions.
-#' @param check_signal_strength Logical, if TRUE, constructed regions must have a minimum signal strength.
+#' @param check_signal_strength Logical, if TRUE, construction of regions must be based on nucleotides that have a minimum absolute value of reactivity.
 #' @param check_nucs Logical, if TRUE, constructed regions must have a minimum number of nucleotides participating in Wilcoxon signed rank test.
 #' @param check_quality Logical, if TRUE, check constructed regions for quality.
-#' @param batches Logical suggesting if replicates of group A and B were performed in batches and are labelled accordingly.
+#' @param batches Logical suggesting if replicates of group A and B were performed in batches and are labelled accordingly. If TRUE, a heterogeneous/homogeneous subset may not have multiple samples from the same batch.
 #' @param between_combs Dataframe with each column containing groupings of replicates of groups A and B, which will be used to assess between-group variation.
 #' @param within_combs Data.frame with each column containing groupings of replicates of groups A or B, which will be used to assess within-group variation.
 #' @param quality Worst allowed quality for a region to be tested.
-#' @param evidence Minimum evidence of between-group variation for a region to be tested.
+#' @param evidence Minimum evidence of increase in variation from within-group comparisons to between-group comparisons for a region to be tested.
 #' @param signal_strength Threshold for minimum signal strength.
 #' @param ind_regions Logical, if TRUE, test each region found in the transcript separately.
 #' @param gap Integer. Join regions if they are separated by these many nucleotides.
 #' @param processes Number of parallel processes to use.
 #' @param method Character specifying either guided or de novo discovery approach.
+#' @param proximity_assisted Logical, if TRUE, proximally located regions are tested together.
+#' @param proximity Maximum distance between constructed regions for them to be considered proximal.
+#' @param proximity_defined_length If performing a "proximity-assisted" test, minimum end-to-end length of a region to be tested.
 #' @return Constructs regions, reports p-values and FDR for them.
 #' @export
 dStructome <- function(rl, reps_A, reps_B, batches= F, min_length = 11,
@@ -452,7 +472,8 @@ dStructome <- function(rl, reps_A, reps_B, batches= F, min_length = 11,
                        quality = "auto", evidence = 0, signal_strength = 0.1,
                        within_combs = NULL, between_combs= NULL, ind_regions = T, gap = 1,
                        processes = "auto", method = "denovo",
-                       proximity_assisted = F, proximity = 10) {
+                       proximity_assisted = F, proximity = 10,
+                       proximity_defined_length = 30) {
 
   if (is.null(names(rl)) | (length(names(rl)) != length(rl))) stop("List \'rl\' supplied to dStructome without transcript names.")
 
@@ -487,7 +508,8 @@ dStructome <- function(rl, reps_A, reps_B, batches= F, min_length = 11,
               check_signal_strength, check_nucs, check_quality,
               quality, evidence, signal_strength,
               within_combs, between_combs, ind_regions, gap,
-              get_FDR = F, proximity_assisted, proximity)
+              get_FDR = F, proximity_assisted, proximity,
+              proximity_defined_length)
     }, rl, mc.cores=processes, SIMPLIFY = F)
 
     if (ind_regions) {

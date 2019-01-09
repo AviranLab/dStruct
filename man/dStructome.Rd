@@ -9,7 +9,7 @@ dStructome(rl, reps_A, reps_B, batches = F, min_length = 11,
   quality = "auto", evidence = 0, signal_strength = 0.1,
   within_combs = NULL, between_combs = NULL, ind_regions = T, gap = 1,
   processes = "auto", method = "denovo", proximity_assisted = F,
-  proximity = 10)
+  proximity = 10, proximity_defined_length = 30)
 }
 \arguments{
 \item{rl}{List of dataframes of reactivities for each sample.}
@@ -18,11 +18,11 @@ dStructome(rl, reps_A, reps_B, batches = F, min_length = 11,
 
 \item{reps_B}{Number of replicates of group B.}
 
-\item{batches}{Logical suggesting if replicates of group A and B were performed in batches and are labelled accordingly.}
+\item{batches}{Logical suggesting if replicates of group A and B were performed in batches and are labelled accordingly. If TRUE, a heterogeneous/homogeneous subset may not have multiple samples from the same batch.}
 
 \item{min_length}{Minimum length of constructed regions.}
 
-\item{check_signal_strength}{Logical, if TRUE, constructed regions must have a minimum signal strength.}
+\item{check_signal_strength}{Logical, if TRUE, construction of regions must be based on nucleotides that have a minimum absolute value of reactivity.}
 
 \item{check_nucs}{Logical, if TRUE, constructed regions must have a minimum number of nucleotides participating in Wilcoxon signed rank test.}
 
@@ -30,7 +30,7 @@ dStructome(rl, reps_A, reps_B, batches = F, min_length = 11,
 
 \item{quality}{Worst allowed quality for a region to be tested.}
 
-\item{evidence}{Minimum evidence of between-group variation for a region to be tested.}
+\item{evidence}{Minimum evidence of increase in variation from within-group comparisons to between-group comparisons for a region to be tested.}
 
 \item{signal_strength}{Threshold for minimum signal strength.}
 
@@ -45,6 +45,12 @@ dStructome(rl, reps_A, reps_B, batches = F, min_length = 11,
 \item{processes}{Number of parallel processes to use.}
 
 \item{method}{Character specifying either guided or de novo discovery approach.}
+
+\item{proximity_assisted}{Logical, if TRUE, proximally located regions are tested together.}
+
+\item{proximity}{Maximum distance between constructed regions for them to be considered proximal.}
+
+\item{proximity_defined_length}{If performing a "proximity-assisted" test, minimum end-to-end length of a region to be tested.}
 }
 \value{
 Constructs regions, reports p-values and FDR for them.

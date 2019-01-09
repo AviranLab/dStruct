@@ -9,13 +9,13 @@ dStruct.guided(rdf, reps_A, reps_B, batches = F, within_combs = NULL,
   evidence = 0)
 }
 \arguments{
-\item{rdf}{Dataframe of reactivities for each sample.}
+\item{rdf}{Dataframe of reactivities for each sample. Each column must be labelled as A1, A2, ..., B1, B2, ...}
 
 \item{reps_A}{Number of replicates of group A.}
 
 \item{reps_B}{Number of replicates of group B.}
 
-\item{batches}{Logical suggesting if replicates of group A and B were performed in batches and are labelled accordingly.}
+\item{batches}{Logical suggesting if replicates of group A and B were performed in batches and are labelled accordingly. If TRUE, a heterogeneous/homogeneous subset may not have multiple samples from the same batch.}
 
 \item{within_combs}{Data.frame with each column containing groupings of replicates of groups A or B, which will be used to assess within-group variation.}
 
@@ -25,7 +25,7 @@ dStruct.guided(rdf, reps_A, reps_B, batches = F, within_combs = NULL,
 
 \item{quality}{Worst allowed quality for a region to be tested.}
 
-\item{evidence}{Minimum evidence of between-group variation for a region to be tested.}
+\item{evidence}{Minimum evidence of increase in variation from within-group comparisons to between-group comparisons for a region to be tested.}
 }
 \value{
 p-value for the tested region, estimated using one-sided Wilcoxon signed rank test.

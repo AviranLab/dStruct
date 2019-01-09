@@ -17,7 +17,7 @@ getRegions(d_within, d_spec, rdf, min_length = 11,
 
 \item{min_length}{Minimum length of constructed regions.}
 
-\item{check_signal_strength}{Logical, if TRUE, constructed regions must have a minimum signal strength.}
+\item{check_signal_strength}{Logical, if TRUE, construction of regions must be based on nucleotides that have a minimum absolute value of reactivity.}
 
 \item{check_nucs}{Logical, if TRUE, constructed regions must have a minimum number of nucleotides participating in Wilcoxon signed rank test.}
 
@@ -25,7 +25,7 @@ getRegions(d_within, d_spec, rdf, min_length = 11,
 
 \item{quality}{Worst allowed quality for a region to be tested.}
 
-\item{evidence}{Minimum evidence of between-group variation for a region to be tested.}
+\item{evidence}{Minimum evidence of increase in variation from within-group comparisons to between-group comparisons for a region to be tested.}
 
 \item{signal_strength}{Threshold for minimum signal strength.}
 }

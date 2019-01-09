@@ -2,7 +2,7 @@
 % Please edit documentation in R/dStruct.R
 \name{getContigRegions}
 \alias{getContigRegions}
-\title{Performs guided discovery of differentially reactive regions.}
+\title{Identifies contiguous regions from a list of nucleotide indices.}
 \usage{
 getContigRegions(x, gap = 0)
 }
@@ -15,5 +15,5 @@ getContigRegions(x, gap = 0)
 Dataframe storing start and stop sites of continguous regions.
 }
 \description{
-Performs guided discovery of differentially reactive regions.
+Identifies contiguous regions from a list of nucleotide indices.
 }

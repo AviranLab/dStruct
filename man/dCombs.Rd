@@ -2,12 +2,12 @@
 % Please edit documentation in R/dStruct.R
 \name{dCombs}
 \alias{dCombs}
-\title{Assesses within-group variation.}
+\title{Assesses within-group or between-group variation.}
 \usage{
 dCombs(rdf, combs)
 }
 \arguments{
-\item{rdf}{Dataframe of reactivities for each sample.}
+\item{rdf}{Data.frame of reactivities for each sample.}
 
 \item{combs}{Data.frame with each column containing groupings of samples.}
 }
@@ -15,5 +15,5 @@ dCombs(rdf, combs)
 Nucleotide-wise d score.
 }
 \description{
-Assesses within-group variation.
+Assesses within-group or between-group variation.
 }

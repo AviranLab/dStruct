@@ -12,7 +12,7 @@ getCombs(reps_A, reps_B, batches = F, between_combs = NULL,
 
 \item{reps_B}{Number of replicates of group B.}
 
-\item{batches}{Logical suggesting if replicates of group A and B were performed in batches and are labelled accordingly.}
+\item{batches}{Logical suggesting if replicates of group A and B were performed in batches and are labelled accordingly. If TRUE, a heterogeneous/homogeneous subset may not have multiple samples from the same batch.}
 
 \item{between_combs}{Dataframe with each column containing groupings of replicates of groups A and B, which will be used to assess between-group variation.}
 
