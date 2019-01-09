@@ -10,6 +10,25 @@ dStruct is written in R version 3.4.1. To start with, download and install the l
 
 dStruct can be installed directly from source. Download the distribution tarball. Next, in RStudio type
 
-`install.packages(path_to_tarball, repos = NULL, type="source")`
+`install.packages(path_to_tarball, repos = NULL, type="source")`.
+
+This should install the package in R. Check by executing the following command.
+
+`library(dStruct)`
+
+In the future, we plan to make dStruct available through Bioconductor.
+
+## Usage
+
+dStruct takes reactivities of groups of samples for all transcripts under consideration.
+
+## Citation
+
+Choudhary K., Lai Y.H., Tran E., Aviran S. (2019) "dStruct: identifying differentially reactive regions from RNA structurome profiling data."
+
+## Contributors
+
+* [Krishna Choudhary](https://www.linkedin.com/in/datamaster/) - _Initial implementation and developer_
+* [Sharon Aviran](https://aviranlab.bme.ucdavis.edu/) - _Supervisor_
 
 
