@@ -8,9 +8,14 @@ dStruct is a statistical method for identifying regions that display altered rea
 
 dStruct is written in R version 3.4.1. To start with, download and install the latest versions of [R](https://cran.r-project.org/) and [RStudio](https://www.rstudio.com/products/rstudio/).
 
-dStruct can be installed directly from source. Download the distribution tarball. Next, in RStudio type
+dStruct can be installed directly from source. First, install `devtools` by executing the following in RStudio.
 
-`install.packages(path_to_tarball, repos = NULL, type="source")`.
+`install.packages("devtools")`
+
+Next, in RStudio run the following.
+
+`library(devtools)
+install_github("AviranLab/dStruct")`
 
 This should install the package in R. Check by executing the following command.
 
