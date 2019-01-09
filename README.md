@@ -14,8 +14,8 @@ dStruct can be installed directly from source. First, install `devtools` by exec
 
 Next, in RStudio run the following.
 
-`library(devtools)`
-`install_github("AviranLab/dStruct")`
+    library(devtools)
+    install_github("AviranLab/dStruct")
 
 This should install the package in R. Check by executing the following command.
 
