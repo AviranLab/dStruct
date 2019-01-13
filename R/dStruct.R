@@ -564,34 +564,37 @@ plot_dStructurome <- function(rl, diff_regions, outfile, fdr = 0.05, ylim = c(-0
     curr_regs = subset(diff_regions, t == curr_t)
     curr_df = rl[[curr_t]]
 
-    print(ggplot2::ggplot(data=data.frame(x=0,y=0), aes(x=x, y=y)) +
-            annotate("text", x = 4, y = 25,
+    print(ggplot2::ggplot(data=data.frame(x=0,y=0), ggplot2::aes(x=x, y=y)) +
+            ggplot2::annotate("text", x = 4, y = 25,
                      label = curr_t) +
-            theme_classic()+
-            theme(axis.line=element_blank(),
-                  axis.text.x=element_blank(),
-                  axis.text.y=element_blank(),
-                  axis.ticks=element_blank(),
-                  axis.title.x=element_blank(),
-                  axis.title.y=element_blank(),
+            ggplot2::theme_classic()+
+            ggplot2::theme(axis.line=ggplot2::element_blank(),
+                  axis.text.x=ggplot2::element_blank(),
+                  axis.text.y=ggplot2::element_blank(),
+                  axis.ticks=ggplot2::element_blank(),
+                  axis.title.x=ggplot2::element_blank(),
+                  axis.title.y=ggplot2::element_blank(),
                   legend.position="none",
-                  panel.background=element_blank(),
-                  panel.border=element_blank(),
-                  panel.grid.major=element_blank(),
-                  panel.grid.minor=element_blank(),
-                  plot.background=element_blank())
+                  panel.background=ggplot2::element_blank(),
+                  panel.border=ggplot2::element_blank(),
+                  panel.grid.major=ggplot2::element_blank(),
+                  panel.grid.minor=ggplot2::element_blank(),
+                  plot.background=ggplot2::element_blank())
     )
 
     dat = data.frame(curr_df, n = 1:nrow(curr_df))
     dat = reshape2::melt(dat, id.vars = "n")
 
-    print(ggplot2::ggplot(dat, aes(x= n, y= value)) + geom_bar(stat="identity") +facet_grid(variable~.)+
-            coord_cartesian(ylim=ylim) +
-            geom_rect(aes(NULL, NULL, xmin=Start-0.5, xmax=Stop+0.5),
-                      ymin= -Inf, ymax= Inf, data= curr_regs, fill= "red", color= NA, alpha= 0.3) +
-            theme(strip.text = element_text(size = 6), legend.position = "none") +
-            ggtitle(curr_t)+
-            xlab("Nucleotide") + ylab("Reactivity"))
+    print(ggplot2::ggplot(dat, ggplot2::aes(x= n, y= value)) + 
+            ggplot2::geom_bar(stat="identity") +ggplot2::facet_grid(variable~.)+
+            ggplot2::coord_cartesian(ylim=ylim) +
+            ggplot2::geom_rect(ggplot2::aes(NULL, NULL, xmin=Start-0.5, xmax=Stop+0.5),
+                      ymin= -Inf, ymax= Inf, data= curr_regs, fill= "red", 
+                      color= NA, alpha= 0.3) +
+            ggplot2::theme(strip.text = ggplot2::element_text(size = 6), 
+                           legend.position = "none") +
+            ggplot2::ggtitle(curr_t)+
+            ggplot2::xlab("Nucleotide") + ggplot2::ylab("Reactivity"))
 
 
     for (r in 1:nrow(curr_regs)) {
@@ -599,11 +602,13 @@ plot_dStructurome <- function(rl, diff_regions, outfile, fdr = 0.05, ylim = c(-0
                        n = curr_regs$Start[r]:curr_regs$Stop[r])
       dat = reshape2::melt(dat, id.vars = "n")
 
-      print(ggplot2::ggplot(dat, aes(x= n, y= value)) + geom_bar(stat="identity") +facet_grid(variable~.)+
-              coord_cartesian(ylim=ylim) +
-              theme(strip.text = element_text(size = 6), legend.position = "none") +
-              ggtitle(curr_t)+
-              xlab("Nucleotide") + ylab("Reactivity"))
+      print(ggplot2::ggplot(dat, ggplot2::aes(x= n, y= value)) + 
+              ggplot2::geom_bar(stat="identity") +ggplot2::facet_grid(variable~.)+
+              ggplot2::coord_cartesian(ylim=ylim) +
+              ggplot2::theme(strip.text = ggplot2::element_text(size = 6), 
+                             legend.position = "none") +
+              ggplot2::ggtitle(curr_t)+
+              ggplot2::xlab("Nucleotide") + ggplot2::ylab("Reactivity"))
     }
 
   }
