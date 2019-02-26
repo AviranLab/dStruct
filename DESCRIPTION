@@ -2,8 +2,8 @@ Package: dStruct
 Type: Package
 Title: Identifying differentially reactive regions from RNA structurome profiling data
 Version: 0.1.0
-Author: Krishna Choudhary <kchoudhary@ucdavis.edu>
-Maintainer: Krishna Choudhary <kchoudhary@ucdavis.edu>
+Author: Krishna Choudhary <krishna.choudhary@gladstone.ucsf.edu>
+Maintainer: Krishna Choudhary <krishna.choudhary@gladstone.ucsf.edu>, Sharon Aviran <saviran@ucdavis.edu>
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
 Imports:
