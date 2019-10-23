@@ -25,7 +25,7 @@ In the future, we plan to make dStruct available through Bioconductor.
 
 ## Usage
 
-dStruct takes reactivities of groups of samples, say A and B, for all transcripts under consideration. The reactivities for each transcript must be a data frame object with columns labeled as A1, A2, ... and B1, B2, ... The numerals in column names indicate sample number. Let us say that `reactivity` represents one such data frame, that there are 3 samples of each group and that the user needs to search for a minimum length of 11 nt (note that this is the default value for this parameter). _De novo_ discovery of differential regions can be done by executing the following command.
+dStruct takes reactivities of groups of samples, say A and B, for all transcripts under consideration. The reactivities for each transcript must be a data frame object with columns labeled as A1, A2, ... and B1, B2, ... The numerals in column names indicate sample number. Let us say that `reactivity` represents one such data frame, that there are 3 samples of each group and that the user needs to search for a minimum length of 11 nt. Note that this is the default value for this parameter. For other parameters that can be specified, refer the manual. Unless specified, `dStruct` assumes that the user intends to run the analysis with default settings. _De novo_ discovery of differential regions can be done by executing the following command.
 
 `dStruct(reactivity, reps_A = 3, reps_B = 3, min_length = 11)`
 
