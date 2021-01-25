@@ -1,4 +1,4 @@
-# dStruct is now being maintained and supported by AviranLab alumnus, Krishna Choudhary. Please visit [https://github.com/dataMaster-Kris/dStruct](https://github.com/dataMaster-Kris/dStruct) for updates and to report issues. This repository contains the code for the initial release of dStruct reported in our [publication](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-019-1641-3).
+# dStruct is now being maintained and supported by Aviran lab alumnus, Krishna Choudhary. Please visit [https://github.com/dataMaster-Kris/dStruct](https://github.com/dataMaster-Kris/dStruct) for updates and to report issues. This repository contains the code for the initial release of dStruct reported in our [publication](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-019-1641-3).
 
 # dStruct
 
